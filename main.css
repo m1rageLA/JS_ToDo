@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Source+Code+Pro&display=swap');
+body {
+    background-color: #13151a;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*----УБИРАЕТ СКРОЛЛ ЛИНИЮ---------*/
+::-webkit-scrollbar {
+    width: 0;
+  }
+
+main {
+    display: grid;
+    grid-template-rows: 0.3fr 1fr 0.3fr;
+    width: 60vw;
+    height: 100vh;
+    place-items: center;
+    
+}
+
+input::placeholder {
+    color: rgb(111, 112, 116);
+}
+
+p {
+    font-size: 18px;
+    color: white;
+    padding: 0;
+    margin: 0;
+    justify-content: left;
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Source Code Pro', monospace;
+}
+
+li {
+    color: white;
+    list-style-type: none; 
+}
+
+/*------------FORM--------------*/
+
+.logo {
+    top: 8vh;
+    color: #2c303a;
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 35px;
+    grid-row: 0;
+}
+.form {
+    align-items: center;
+    width: 65%;
+    height: 7vh;
+    background-color: #1b1d22; 
+    grid-row: 3;
+    border-radius: 18px;
+}
+
+.tasksList {
+    width: 65%;
+    height:  100%;
+    max-height: 70vh;
+    padding: 0;
+    overflow-y: scroll;
+    grid-row: 2;
+}
+
+.form__content {
+    display: grid;
+    grid-template-columns: 1fr 0.1fr;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+.form__content p {
+    margin: 0 0 20px 0;
+}
+
+.inputField {
+    background-color: transparent;
+    width: 95%;
+    height: 70%;
+    margin: 0 15px;
+    border: none;
+    outline: transparent;
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Source Code Pro', monospace;
+    color: white;
+}
+
+.descriptionField {
+    margin: 15px 0 0 0;
+}
+
+.submitButton {
+    width: 50%;
+    height: 50%;
+    border-radius: 25px;
+    border: none;
+    background-color: transparent;
+    border: 2px solid #00627e;
+    color: rgb(210, 210, 210);
+    justify-self: center;
+}
+
+.submitButton:hover{
+    background-color: #00a1c9;
+    transition: background-color 0.4s ease;
+}
+
+.tasks {
+    padding: 0 10px;
+}
+
+.task-div {
+    display: grid;
+    grid-template-columns: 0.1fr 1fr;
+}
+
+.asd{
+    height: 2.5vh;
+    border-radius: 10px;
+    background-color: #191b21;
+    padding: 15px 30px;
+    margin: 8px 0;
+}
