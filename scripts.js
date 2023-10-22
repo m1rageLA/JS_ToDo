@@ -5,12 +5,11 @@ const taskList = document.getElementById("taskList");
 let tasksCollection = [];
 let id = -1;
 
-function createTaskElement(text, description, currentID) {
+function createTaskElement(text, currentID) {
     let task_li = document.createElement("li");
     let task_div = document.createElement("div");
     let task_radio = document.createElement("input");
     let task_p_text = document.createElement("p");
-    let task_p_descr = document.createElement("p");
     
     task_radio.setAttribute("type", "radio");
 
@@ -19,7 +18,6 @@ function createTaskElement(text, description, currentID) {
     });
 
     task_p_text.textContent = text;
-    task_p_descr.textContent = description;
     
     task_li.classList.add('asd');
     task_div.classList.add('task-div');
@@ -32,19 +30,20 @@ function createTaskElement(text, description, currentID) {
     return task_li;
 }
 
-    function addTask() {
-        if (textInput.value !== "") {
-            let task = {
-                id: id++,
-                text: textInput.value,
-                completed: false,
-            };
-            tasksCollection.push(task);
-        } else {
-            console.log("Пустое поле");
-            return 0;
-        }
+function addTask() {
+    if (textInput.value !== "") {
+        let task = {
+            id: id++,
+            text: textInput.value,
+            completed: false,
+        };
+        tasksCollection.push(task);
+        saveTasks(tasksCollection);
+    } else {
+        console.log("Пустое поле");
+        return 0;
     }
+}
 
 function removeTask(currentID, task_li) {
     task_li.remove();
@@ -54,6 +53,30 @@ function removeTask(currentID, task_li) {
 
 document.getElementById("sendButton").addEventListener("click", () => {
     addTask();
-    const { text, description, currentID = id } = tasksCollection[id];//--destructuring--
-    taskList.appendChild(createTaskElement(text, description, currentID));
+    const { text, currentID = id } = tasksCollection[tasksCollection.length - 1];
+    taskList.appendChild(createTaskElement(text, currentID));
 });
+
+// Save tasks to local storage
+function saveTasks(tasks) {
+    localStorage.setItem('tasks', JSON.stringify(tasks));    
+}
+
+// Load tasks from local storage
+function loadTasks() { 
+    const savedTasks = localStorage.getItem('tasks');
+    return savedTasks ? JSON.parse(savedTasks) : [];
+}
+
+// Load tasks from local storage on page load
+tasksCollection = loadTasks();
+
+// Render existing tasks on page load
+tasksCollection.forEach(task => {
+    taskList.appendChild(createTaskElement(task.text, task.id));
+});
+
+//Remove all
+function clearTasks() {
+    localStorage.removeItem('tasks');
+}
