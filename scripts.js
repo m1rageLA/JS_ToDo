@@ -33,10 +33,11 @@ function createTaskElement(text, currentID) {
 function addTask() {
     if (textInput.value !== "") {
         let task = {
-            id: id++,
             text: textInput.value,
             completed: false,
         };
+        console.log(tasksCollection);
+        id++;
         tasksCollection.push(task);
         saveTasks(tasksCollection);
     } else {
@@ -47,13 +48,14 @@ function addTask() {
 
 function removeTask(currentID, task_li) {
     task_li.remove();
-    tasksCollection[currentID].completed = true;
-    console.log(tasksCollection[currentID]);
+    tasksCollection[currentID - 1].completed = true;
+    saveTasks(tasksCollection);
+    console.log(tasksCollection);
 }
 
 document.getElementById("sendButton").addEventListener("click", () => {
     addTask();
-    const { text, currentID = id } = tasksCollection[tasksCollection.length - 1];
+    const { text, currentID = id } = tasksCollection[id];
     taskList.appendChild(createTaskElement(text, currentID));
 });
 
@@ -73,10 +75,8 @@ tasksCollection = loadTasks();
 
 // Render existing tasks on page load
 tasksCollection.forEach(task => {
-    taskList.appendChild(createTaskElement(task.text, task.id));
+    if (task.completed === false) {
+        console.log("FALSE");
+        taskList.appendChild(createTaskElement(task.text, task.id));
+    }
 });
-
-//Remove all
-function clearTasks() {
-    localStorage.removeItem('tasks');
-}
