@@ -36,10 +36,10 @@ function addTask() {
             text: textInput.value,
             completed: false,
         };
-        console.log(tasksCollection);
         id++;
         tasksCollection.push(task);
         saveTasks(tasksCollection);
+        textInput.value = ""; // Очищаем поле ввода после добавления задачи
     } else {
         console.log("Пустое поле");
         return 0;
@@ -48,15 +48,14 @@ function addTask() {
 
 function removeTask(currentID, task_li) {
     task_li.remove();
-    tasksCollection[currentID - 1].completed = true;
+    tasksCollection[currentID].completed = true;
     saveTasks(tasksCollection);
-    console.log(tasksCollection);
 }
 
 document.getElementById("sendButton").addEventListener("click", () => {
     addTask();
-    const { text, currentID = id } = tasksCollection[id];
-    taskList.appendChild(createTaskElement(text, currentID));
+    const currentID = id;
+    taskList.appendChild(createTaskElement(tasksCollection[currentID].text, currentID));
 });
 
 // Save tasks to local storage
@@ -74,9 +73,8 @@ function loadTasks() {
 tasksCollection = loadTasks();
 
 // Render existing tasks on page load
-tasksCollection.forEach(task => {
+tasksCollection.forEach((task, index) => {
     if (task.completed === false) {
-        console.log("FALSE");
-        taskList.appendChild(createTaskElement(task.text, task.id));
+        taskList.appendChild(createTaskElement(task.text, index));
     }
 });
