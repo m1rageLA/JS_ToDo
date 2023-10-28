@@ -3,7 +3,7 @@ const descrInput = document.getElementById("descrField");
 const taskList = document.getElementById("taskList");
 
 let tasksCollection = [];
-let id = -1;
+let id = parseInt(localStorage.getItem('taskID')) || 0;
 
 function createTaskElement(text, currentID) {
     let task_li = document.createElement("li");
@@ -36,13 +36,15 @@ function addTask() {
             text: textInput.value,
             completed: false,
         };
+        
         id++;
+
+        localStorage.setItem('taskID', id);
         tasksCollection.push(task);
         saveTasks(tasksCollection);
-        textInput.value = ""; // Очищаем поле ввода после добавления задачи
+        textInput.value = "";
     } else {
         console.log("Пустое поле");
-        return 0;
     }
 }
 
@@ -53,28 +55,31 @@ function removeTask(currentID, task_li) {
 }
 
 document.getElementById("sendButton").addEventListener("click", () => {
-    addTask();
-    const currentID = id;
-    taskList.appendChild(createTaskElement(tasksCollection[currentID].text, currentID));
+    if (textInput.value !== "") {
+        addTask();
+        const currentID = id - 1;
+        taskList.appendChild(createTaskElement(tasksCollection[currentID].text, currentID));
+    }
+    else {
+        console.log("Пустое поле");
+    }
 });
 
-// Save tasks to local storage
 function saveTasks(tasks) {
     localStorage.setItem('tasks', JSON.stringify(tasks));    
 }
 
-// Load tasks from local storage
 function loadTasks() { 
     const savedTasks = localStorage.getItem('tasks');
     return savedTasks ? JSON.parse(savedTasks) : [];
 }
 
-// Load tasks from local storage on page load
 tasksCollection = loadTasks();
 
-// Render existing tasks on page load
 tasksCollection.forEach((task, index) => {
     if (task.completed === false) {
         taskList.appendChild(createTaskElement(task.text, index));
     }
 });
+
+//TODO: Сделать функциональность сделанных задач
