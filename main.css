@@ -16,7 +16,7 @@ body {
 
 main {
     display: grid;
-    grid-template-rows: 0.3fr 1fr 0.3fr;
+    grid-template-rows: 0.3fr 1fr 0.2fr;
     width: 60vw;
     height: 100vh;
     place-items: center;
@@ -62,6 +62,8 @@ li {
 }
 
 .tasksList {
+    display: flex;
+    flex-direction: column;
     width: 65%;
     height:  100%;
     max-height: 70vh;
@@ -102,7 +104,7 @@ li {
 .submitButton {
     width: 50%;
     height: 50%;
-    border-radius: 25px;
+    border-radius: 40px;
     border: none;
     background-color: transparent;
     border: 2px solid #00627e;
@@ -110,11 +112,15 @@ li {
     justify-self: center;
 }
 
-.submitButton:hover{
+.submitButton:hover {
     background-color: #00a1c9;
-    transition: background-color 0.4s ease;
+    transition: background-color 0.4s ease; /* Транзишн только для hover */
 }
 
+.submitButton:active {
+    transition: none; /* Отключаем транзишн */
+    background-color: #006d89; /* Устанавливаем цвет сразу при нажатии */
+}
 .tasks {
     padding: 0 10px;
 }
@@ -124,10 +130,46 @@ li {
     grid-template-columns: 0.1fr 1fr;
 }
 
-.asd{
+.liElement{
     height: 2.5vh;
-    border-radius: 10px;
-    background-color: #191b21;
+    border-radius: 8px;
+    background-color: #1c1e23;
     padding: 15px 30px;
     margin: 8px 0;
 }
+
+.liElement:hover {
+    background-color: #23252b;
+}
+
+.finished {
+    padding: 0 10px;
+}
+
+.line {
+    margin: 20px auto;
+    width: 75%;
+    height: 1px;
+    background-color: red;
+}
+
+.radio {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /*---(^Отмена стилей^)---*/
+    width: 20px;
+    border-radius: 20px;
+    background-color: transparent;
+    border: solid 2px #92909b;
+}
+
+.radio:hover{
+    border-color: #3c7b8c;
+}
+
+.radio:active{
+    background-color: #00627e;
+    transition: background-color 0.1s ease;
+}
+
