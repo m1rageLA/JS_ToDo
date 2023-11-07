@@ -1,5 +1,6 @@
 -----ЗАКОМИТИТЬ ПРОЕКТ-----
 git add .    /    git add filename.js
+git commit -m "Add finished tasks hiding"
 git push -u origin main
 
 -----ВЕРНУТЬСЯ К ПРЕДЫДУЩЕМУ КОММИТУ-----

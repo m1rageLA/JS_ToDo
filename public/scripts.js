@@ -4,51 +4,98 @@ const textInput = document.getElementById("nameField");
 const taskList = document.getElementById("taskList");
 const finishedList = document.getElementById("finishedTaskList");
 const finishedBox = document.getElementById("finishedBoxButton");
+
 let tasksCollection = [];
+let activeElement = null;
+let finishListIsHidden = false;
 
 let id = parseInt(localStorage.getItem('taskID')) || 0;
-let activeElement = null;
 
-function createTaskElement(text, currentID) {
-    let task_li = document.createElement("li");
-    let task_div = document.createElement("div");
-    let task_radio = document.createElement("input");
-    let task_p_text = document.createElement("p");
+function createTaskElement(currentID) {
 
-    task_radio.setAttribute("type", "radio");
+    const liElement = document.createElement("li");
+    liElement.classList.add('liElement');
+    const divElement = document.createElement("div");
+    divElement.classList.add('task-div');
+    const textElement = document.createElement("p");
+    textElement.textContent = tasksCollection[currentID].text;
+    textElement.classList.add('textInLiElement');
+    const editTaskField = document.createElement("input");
+    editTaskField.setAttribute("placeholder", "Enter the new task name...");
+    editTaskField.classList.add('editTaskField');
+    const submitChange = document.createElement("input");
+    submitChange.setAttribute("type", "submit");
+    submitChange.setAttribute("value", "Submit");
+    submitChange.classList.add('submitChange');
 
-    task_radio.addEventListener('click', () => {
-        removeTask(currentID, task_li, text);
+    const checkboxElement = document.createElement("input");
+    checkboxElement.classList.add('radio');
+    checkboxElement.setAttribute("type", "radio");
+    checkboxElement.addEventListener('click', () => {
+        removeTask(currentID, liElement);
     });
 
-    task_p_text.textContent = text;
+    divElement.appendChild(checkboxElement);
+    divElement.appendChild(submitChange);
+    divElement.appendChild(textElement);
+    divElement.appendChild(editTaskField);
+    liElement.appendChild(divElement);
+    if (tasksCollection[currentID].completed) {
+        checkboxElement.style.borderColor = "#006079";
+    }
+    function showAdditionalPram(actualHeight) {
+        activeElement = liElement;
+        liElement.dataset.startHeight = actualHeight;
+        liElement.style.height = actualHeight + 60 + "px";
+        editTaskField.style.display = "block";
+        submitChange.style.display = "block";
+    }
 
-    task_li.classList.add('liElement');
-    task_div.classList.add('task-div');
-    task_p_text.classList.add('a');
-    task_radio.classList.add('radio');
+    function hideAdditionalParam() {
+        activeElement = null;
+        liElement.style.height = liElement.dataset.startHeight + "px";
+        editTaskField.style.display = "none";
+        submitChange.style.display = "none";
+    }
 
-    task_div.appendChild(task_radio);
-    task_div.appendChild(task_p_text);
-    task_li.appendChild(task_div);
+    function hidePreviousActivity() {
+        activeElement.style.height = activeElement.dataset.startHeight + "px";
+        activeElement.querySelector('.editTaskField').style.display = "none";
+        activeElement.querySelector('.submitChange').style.display = "none";
+    }
 
-    task_li.addEventListener('click', () => {
-        const actualHeight = parseInt(window.getComputedStyle(task_li).height);
-        if (activeElement !== null && activeElement !== task_li) {
-            activeElement.style.height = activeElement.dataset.startHeight + "px";
+    liElement.addEventListener('click', () => {
+        //Check if the target of the input event has the class 'editTaskField'
+        if (event.target.classList.contains('editTaskField') || event.target.classList.contains('submitChange')) {
+            return; // If yes, simply end the function
         }
-        if (activeElement !== task_li) {
-            activeElement = task_li;
-            task_li.dataset.startHeight = actualHeight;
-            task_li.style.height = actualHeight + 60 + "px";
-        } else {
-            activeElement = null;
-            task_li.style.height = task_li.dataset.startHeight + "px";
+        const actualHeight = parseInt(window.getComputedStyle(liElement).height);
+        if (activeElement !== null && activeElement !== liElement) {
+            hidePreviousActivity();//Hide previous activities
+        }
+        if (activeElement !== liElement) {
+            showAdditionalPram(actualHeight);//Show additional parameters
+        } 
+        else {
+            hideAdditionalParam();//Hide additional parameters
         }
     });
     
+    submitChange.addEventListener('click' , () => {
+        if (editTaskField.value!== "") {
+            tasksCollection[currentID].text = editTaskField.value;
+            textElement.textContent = editTaskField.value;
+            editTaskField.value = "";
+            setTimeout(function() {
+                hideAdditionalParam();
+              }, 40); // 1000 миллисекунд = 1 секунда
+              saveTasks(tasksCollection);
+        } else {
+            alert("Empty input field");
+        }
+    });
 
-    return task_li;
+    return liElement;
 }
 
 function addTask() {
@@ -64,34 +111,45 @@ function addTask() {
         saveTasks(tasksCollection);
         textInput.value = "";
     } else {
-        console.log("Пустое поле");
+        alert("Empty input field");
     }
 }
 
-function removeTask(currentID, task_li, text) {
-    task_li.remove();
-    tasksCollection[currentID].completed = true;
-    saveTasks(tasksCollection);
-    finishedList.appendChild(createTaskElement(text, currentID));
+function removeTask(currentID, task_li) {
+    //to remove list 
+    if (tasksCollection[currentID].completed === false) {
+        task_li.remove();
+        tasksCollection[currentID].completed = true;
+        saveTasks(tasksCollection);
+        if (finishListIsHidden === false) {
+            finishedList.appendChild(createTaskElement(currentID));   
+        }
+    //from remove list to task list
+    } else {
+        task_li.remove();
+        tasksCollection[currentID].completed = false;
+        taskList.appendChild(createTaskElement(currentID));   
+        saveTasks(tasksCollection);
+    }
 }
 
 tasksCollection = loadTasks();
 
 tasksCollection.forEach((task, index) => {
-    if (task.completed === false) {
-        taskList.appendChild(createTaskElement(task.text, index));
-    } else if (task.completed === true){
-        finishedList.appendChild(createTaskElement(task.text, index));
+    if (task.completed) {
+        finishedList.appendChild(createTaskElement(index));
+    } else {
+        taskList.appendChild(createTaskElement(index));
     }
 });
 
 function performAction() {
     if (textInput.value !== "") {
         addTask();
-        const currentID = id - 1;
-        taskList.appendChild(createTaskElement(tasksCollection[currentID].text, currentID));
-    } else {
-        console.log("Пустое поле");
+        const index = id - 1;
+        taskList.appendChild(createTaskElement(index));
+    } else {    
+        alert("Empty input field");
     }
 }
 
@@ -105,19 +163,27 @@ textInput.addEventListener("keydown", (event) => {
     }
 });
 
+//Prevents the button "flicker" bug before loading elements
+document.addEventListener('DOMContentLoaded', function() {
+    finishedBox.style.display = "block";
+});
+
 finishedBox.addEventListener('click', function() {
-    var imgElement = this.querySelector('img');
+    const imgElement = this.querySelector('img');
+    //close -> open
     if (imgElement.src.endsWith('icons/left.png')) {
+        finishListIsHidden = false;
         imgElement.src = 'icons/down.png';
         tasksCollection.forEach((task, index) => {
             if (task.completed){
-                finishedList.appendChild(createTaskElement(task.text, index));
+                finishedList.appendChild(createTaskElement(index));
             }
         });
+    //open -> close
     } else if (imgElement.src.endsWith('icons/down.png')) {
         imgElement.src = 'icons/left.png';
         finishedList.innerHTML = "";
-        
+        finishListIsHidden = true;
     }
 });
 

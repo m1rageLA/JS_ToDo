@@ -124,22 +124,81 @@ a {
 .submitButton:active {
     transition: none; /* Отключаем транзишн */
     background-color: #006d89; /* Устанавливаем цвет сразу при нажатии */
+
 }
 .tasks {
     padding: 0 10px;
 }
 
-.task-div {
-    display: grid;
-    grid-template-columns: 0.1fr 1fr;
-}
 
 .liElement{
+    display: grid;
+    grid-template-columns: 0.2fr 1fr;
+    grid-template-rows: 0.8fr 1fr;
     height: 2.5vh;
     border-radius: 8px;
     background-color: #1c1e23;
-    padding: 15px 30px;
+    padding: 15px 18px;
     margin: 8px 0;
+}
+
+.radio {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /*---(^Отмена стилей^)---*/
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 10px;
+    background-color: transparent;
+    border: solid 2px #7b7979;
+    justify-self: center;
+    align-self: center;
+
+}
+
+.task-div {
+    width: 100%;
+    display: grid;
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;;
+    grid-template-columns: 0.1fr 1fr 0.1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.textInLiElement {
+    grid-column: span 2;
+    grid-row: 1;
+    align-self: center;
+    overflow: hidden;
+}
+
+.submitChange {
+    width: 1fr;
+    height: 80%;
+    display: none;
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.editTaskField {
+    width: 1fr;
+    height: 80%;
+    display: none;
+    grid-column: span 2;
+    grid-row: 2;
+    padding: 0 10px;
+    margin: 0 10px;
+    border: solid 1px #00627e;
+    outline: transparent;
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Source Code Pro', monospace;
+    color: white;
+    background-color: #272a31; 
+    border-radius: 6px;
 }
 
 .liElement:hover {
@@ -179,17 +238,6 @@ a {
     grid-column: 1;
 }
 
-.radio {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    /*---(^Отмена стилей^)---*/
-    width: 20px;
-    border-radius: 20px;
-    background-color: transparent;
-    border: solid 2px #92909b;
-}
-
 .radio:hover{
     border-color: #3c7b8c;
 }
@@ -198,5 +246,3 @@ a {
     background-color: #00627e;
     transition: background-color 0.1s ease;
 }
-
-
