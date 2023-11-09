@@ -20,10 +20,12 @@ function createTaskElement(currentID) {
     const textElement = document.createElement("p");
     textElement.textContent = tasksCollection[currentID].text;
     textElement.classList.add('textInLiElement');
+    const bin = document.createElement('button');
+    bin.classList.add('bin');
     const editTaskField = document.createElement("input");
     editTaskField.setAttribute("placeholder", "Enter the new task name...");
     editTaskField.classList.add('editTaskField');
-    const submitChange = document.createElement("input");
+    const submitChange = document.createElement("div");
     submitChange.setAttribute("type", "submit");
     submitChange.setAttribute("value", "Submit");
     submitChange.classList.add('submitChange');
@@ -38,11 +40,14 @@ function createTaskElement(currentID) {
     divElement.appendChild(checkboxElement);
     divElement.appendChild(submitChange);
     divElement.appendChild(textElement);
+    divElement.appendChild(bin);
     divElement.appendChild(editTaskField);
     liElement.appendChild(divElement);
+
     if (tasksCollection[currentID].completed) {
-        checkboxElement.style.borderColor = "#006079";
+        checkboxElement.style.borderColor = "#346b3d";
     }
+
     function showAdditionalPram(actualHeight) {
         activeElement = liElement;
         liElement.dataset.startHeight = actualHeight;
@@ -64,11 +69,24 @@ function createTaskElement(currentID) {
         activeElement.querySelector('.submitChange').style.display = "none";
     }
 
+    function editTask() {
+        tasksCollection[currentID].text = editTaskField.value;
+        textElement.textContent = editTaskField.value;
+        editTaskField.value = "";
+        setTimeout(function() {
+            hideAdditionalParam();
+          }, 40);
+        saveTasks(tasksCollection);
+    }
+
     liElement.addEventListener('click', () => {
         //Check if the target of the input event has the class 'editTaskField'
-        if (event.target.classList.contains('editTaskField') || event.target.classList.contains('submitChange')) {
-            return; // If yes, simply end the function
+        const { classList } = event.target;
+
+        if (classList.contains('editTaskField') || classList.contains('submitChange' || classList.contains('bin'))) {
+            return; // Если да, просто завершаем функцию
         }
+        
         const actualHeight = parseInt(window.getComputedStyle(liElement).height);
         if (activeElement !== null && activeElement !== liElement) {
             hidePreviousActivity();//Hide previous activities
@@ -81,18 +99,24 @@ function createTaskElement(currentID) {
         }
     });
     
+    editTaskField.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            editTask();
+        }
+    });
+
     submitChange.addEventListener('click' , () => {
         if (editTaskField.value!== "") {
-            tasksCollection[currentID].text = editTaskField.value;
-            textElement.textContent = editTaskField.value;
-            editTaskField.value = "";
-            setTimeout(function() {
-                hideAdditionalParam();
-              }, 40); // 1000 миллисекунд = 1 секунда
-              saveTasks(tasksCollection);
+            editTask();
         } else {
             alert("Empty input field");
         }
+    });
+
+    bin.addEventListener('click', () => {
+        liElement.remove();
+        delete tasksCollection[currentID];
+        saveTasks(tasksCollection);
     });
 
     return liElement;
@@ -136,10 +160,12 @@ function removeTask(currentID, task_li) {
 tasksCollection = loadTasks();
 
 tasksCollection.forEach((task, index) => {
-    if (task.completed) {
-        finishedList.appendChild(createTaskElement(index));
-    } else {
-        taskList.appendChild(createTaskElement(index));
+    if (task !== null) {
+        if (task.completed) {
+            finishedList.appendChild(createTaskElement(index));
+        } else {
+            taskList.appendChild(createTaskElement(index));
+        }  
     }
 });
 
@@ -175,8 +201,10 @@ finishedBox.addEventListener('click', function() {
         finishListIsHidden = false;
         imgElement.src = 'icons/down.png';
         tasksCollection.forEach((task, index) => {
-            if (task.completed){
-                finishedList.appendChild(createTaskElement(index));
+            if (task !== null) {
+                if (task.completed){
+                    finishedList.appendChild(createTaskElement(index));
+                }  
             }
         });
     //open -> close
